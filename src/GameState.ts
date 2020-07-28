@@ -5,7 +5,7 @@ import {
   CellState,
   openCell,
   MINE,
-  openNeighbours
+  openSafeNeighbours
 } from "./GridState";
 import produce from "immer";
 
@@ -83,7 +83,7 @@ export const gameStateReducer: (
         return;
       }
       const { x, y } = action.payload;
-      openNeighbours(state.gridState, x, y);
+      openSafeNeighbours(state.gridState, x, y);
       state.playState = getPlayState(state.gridState);
       break;
     }
@@ -96,6 +96,13 @@ export const gameStateReducer: (
   }
 });
 
+/**
+ * Work out if the game has been won, or if it is Game Over.
+ *
+ * Game is won when all non mine squares are opened.
+ *
+ * Game Over when a mine is opened
+ */
 const getPlayState = (gridState: GridState): PlayState => {
   let isWin = true;
   let isGameOver = false;

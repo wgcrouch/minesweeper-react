@@ -34,6 +34,7 @@ export const Timer: FC<TimerProps> = ({ playState }) => {
     [setTime]
   );
 
+  // Need useLayoutEffect to allow the animationFrame to be cancelled
   useLayoutEffect(() => {
     if (prevState.current !== playState) {
       switch (playState) {
