@@ -20,3 +20,35 @@
   font-size: 13px;
   font-weight: bold;
 }
+
+.cell-open-1 {
+  color: green;
+}
+
+.cell-open-2 {
+  color: blue;
+}
+
+.cell-open-3 {
+  color: red;
+}
+
+.cell-open-4 {
+  color: darkblue;
+}
+
+.cell-open-5 {
+  color: darkred;
+}
+
+.cell-open-6 {
+  color: turquoise;
+}
+
+.cell-open-7 {
+  color: black;
+}
+
+.cell-open-8 {
+  color: grey;
+}

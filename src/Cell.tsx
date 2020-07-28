@@ -1,5 +1,6 @@
 import React, { FC, useCallback } from "react";
 import { GridState, CellState, MINE } from "./GridState";
+import classNames from "classnames";
 import "./Cell.css";
 
 export type CellProps = {
@@ -21,12 +22,9 @@ export const Cell: FC<CellProps> = ({
 }) => {
   const cell = gridState[y][x];
 
-  const handleClick = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      onOpen(x, y);
-    },
-    [onOpen, x, y]
-  );
+  const handleClick = useCallback(() => {
+    onOpen(x, y);
+  }, [onOpen, x, y]);
 
   const handleContextMenu = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -57,11 +55,18 @@ export const Cell: FC<CellProps> = ({
       </button>
     );
   }
+
+  const openClasses = classNames(
+    "cell",
+    "cell-open",
+    cell.value !== MINE && cell.value > 0 && `cell-open-${cell.value}`
+  );
+
   return (
     <button
       onDoubleClick={handleOpenSafe}
       onContextMenu={disableRightClick}
-      className="cell cell-open"
+      className={openClasses}
     >
       {cell.value === MINE && cell.state === CellState.BOOM ? "💥" : null}
       {cell.value === MINE && cell.state !== CellState.BOOM ? "💣" : null}
