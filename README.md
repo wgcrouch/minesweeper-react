@@ -1,4 +1,5 @@
 # minesweeper-react
+https://codesandbox.io/s/github/wgcrouch/minesweeper-react
 
 ![](/screenshot.png?raw=true)
 
