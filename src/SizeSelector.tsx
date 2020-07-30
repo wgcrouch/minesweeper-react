@@ -1,31 +1,26 @@
 import React, { FC } from "react";
-import { GridSize } from "./GridSizes";
+import { useGameState, useGameDispatch } from "./GameContext";
+import { GridSizes } from "./GridSizes";
 
-export type SizeSelectorProps = {
-  selectedSize: GridSize;
-  gridSizes: GridSize[];
-  onChange: (gridSize: GridSize) => void;
-};
+export const SizeSelector: FC = () => {
+  const { gridSize: selectedSize } = useGameState();
+  const dispatch = useGameDispatch();
 
-export const SizeSelector: FC<SizeSelectorProps> = ({
-  gridSizes,
-  selectedSize,
-  onChange
-}) => {
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = gridSizes.find(
+    const selected = GridSizes.find(
       gridSize => gridSize.size === event.target.value
     );
     if (selected) {
-      onChange(selected);
+      dispatch({ type: "change-size", payload: { gridSize: selected } });
     }
   };
+
   return (
     <div>
       <label>
         Game size:{" "}
         <select value={selectedSize.size} onChange={handleChange}>
-          {gridSizes.map(gridSize => (
+          {GridSizes.map(gridSize => (
             <option key={gridSize.size} value={gridSize.size}>
               {gridSize.size}
             </option>

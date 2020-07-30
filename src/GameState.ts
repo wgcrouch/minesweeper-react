@@ -5,7 +5,8 @@ import {
   CellState,
   openCell,
   MINE,
-  openSafeNeighbours
+  openSafeNeighbours,
+  placeMines
 } from "./GridState";
 import produce from "immer";
 
@@ -71,8 +72,14 @@ export const gameStateReducer: (
         return;
       }
       const { x, y } = action.payload;
+
+      // First click so we can place the mines, avoiding the cell clicked on
+      if (state.playState === PlayState.NEW) {
+        placeMines(state.gridState, state.gridSize, x, y);
+      }
       openCell(state.gridState, x, y);
       state.playState = getPlayState(state.gridState);
+      console.log(state.playState);
       break;
     }
     case "open-neighbours": {

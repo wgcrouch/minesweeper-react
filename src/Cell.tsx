@@ -1,42 +1,30 @@
-import React, { FC, useCallback } from "react";
-import { GridState, CellState, MINE } from "./GridState";
+import React, { FC } from "react";
+import { CellState, MINE, GridCellState } from "./GridState";
+import { useGameDispatch } from "./GameContext";
 import classNames from "classnames";
 import "./Cell.css";
 
 export type CellProps = {
   x: number;
   y: number;
-  gridState: GridState;
-  onOpen: (x: number, y: number) => void;
-  onFlag: (x: number, y: number) => void;
-  onOpenNeighbours: (x: number, y: number) => void;
+  cell: GridCellState;
 };
 
-export const Cell: FC<CellProps> = ({
-  x,
-  y,
-  gridState,
-  onOpen,
-  onFlag,
-  onOpenNeighbours
-}) => {
-  const cell = gridState[y][x];
+export const Cell: FC<CellProps> = ({ x, y, cell }) => {
+  const dispatch = useGameDispatch();
 
-  const handleClick = useCallback(() => {
-    onOpen(x, y);
-  }, [onOpen, x, y]);
+  const handleClick = () => {
+    dispatch({ type: "open", payload: { x, y } });
+  };
 
-  const handleContextMenu = useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      event.preventDefault();
-      onFlag(x, y);
-    },
-    [onFlag, x, y]
-  );
+  const handleContextMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    dispatch({ type: "flag", payload: { x, y } });
+  };
 
   const handleOpenSafe = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    onOpenNeighbours(x, y);
+    dispatch({ type: "open-neighbours", payload: { x, y } });
   };
 
   const disableRightClick = (event: React.MouseEvent<any>) => {

@@ -33,7 +33,7 @@ const getNeighbours = (x: number, y: number) => [
  * Creates a fresh game grid
  */
 export const newGridState = (gridSize: GridSize): GridState => {
-  const { height, width, mines} = gridSize;
+  const { height, width } = gridSize;
   let grid: GridState = [];
 
   // Create an empty grid with all closed cells
@@ -44,14 +44,22 @@ export const newGridState = (gridSize: GridSize): GridState => {
     }
   }
 
-  let rem = mines;
+  return grid;
+};
 
+/**
+ * Place mines in the grid but dont place a mine on [notX, notY] as that is the cell the user clicked,
+ * avoiding an immediate game over
+ */
+export const placeMines = (gridState: GridState, gridSize: GridSize, notX: number, notY: number): GridState => {
+  const { width, height, mines} = gridSize;
+  let rem = mines;  
   // randomly place the mies
   while (rem > 0) {
     const [x, y] = randomPosition(width, height);
 
-    if (grid[y][x].value !== MINE) {
-      grid[y][x].value = MINE;
+    if (!(x === notX && y === notY) && gridState[y][x].value !== MINE) {
+      gridState[y][x].value = MINE;
       rem--;
     }
   }
@@ -59,19 +67,19 @@ export const newGridState = (gridSize: GridSize): GridState => {
   // calculate the value of the cell (how many neighbouring cells have mines)
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      if (grid[y][x].value === MINE) {
+      if (gridState[y][x].value === MINE) {
         continue;
       }
 
-      grid[y][x].value = getNeighbours(x, y).reduce(
-        (out, [x, y]) => out + (grid[y]?.[x]?.value === MINE ? 1 : 0), 
+      gridState[y][x].value = getNeighbours(x, y).reduce(
+        (out, [x, y]) => out + (gridState[y]?.[x]?.value === MINE ? 1 : 0), 
         0
       )
     }
   }
 
-  return grid;
-};
+  return gridState
+}
 
 /**
  * Open all squares that have mines (eg on Game Over)

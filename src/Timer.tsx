@@ -12,7 +12,7 @@ export type TimerProps = {
 };
 
 export const Timer: FC<TimerProps> = ({ playState }) => {
-  const [time, setTime] = useState<string>('');
+  const [time, setTime] = useState<string>('0.00');
   const prevState = useRef<PlayState | null>(playState);
   const start = useRef<number | null>(null);
   const request = useRef<number | null>(null);
@@ -43,6 +43,7 @@ export const Timer: FC<TimerProps> = ({ playState }) => {
           request.current = requestAnimationFrame(updateTime);
           break;
         case PlayState.NEW:
+          setTime('0.00');
           request.current && cancelAnimationFrame(request.current);
           start.current = null;
           break;
@@ -53,13 +54,14 @@ export const Timer: FC<TimerProps> = ({ playState }) => {
         default:
           break;
       }
+     prevState.current = playState;
     }
 
     return () => {
       request.current && cancelAnimationFrame(request.current);
     };
-  }, [playState, updateTime]);
-  
+  }, [playState, updateTime, setTime]);
+
   return (
     <div>
       <span role="img" aria-label="Time">
