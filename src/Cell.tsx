@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useCallback, useRef } from "react";
 import { CellState, MINE, GridCellState } from "./GridState";
 import { useGameDispatch } from "./GameContext";
 import classNames from "classnames";
@@ -10,6 +10,41 @@ export type CellProps = {
   cell: GridCellState;
 };
 
+const useOnBothClick = (onBothClick: () => void) => {
+  const leftButtonPressed = useRef(false);
+  const rightButtonPressed = useRef(false);
+
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent<unknown>) => {
+      if (event.button === 0) {
+        leftButtonPressed.current = true;
+      } else if (event.button === 2) {
+        event.preventDefault();
+        rightButtonPressed.current = true;
+      }
+
+      // Check if both buttons are pressed
+      if (leftButtonPressed.current && rightButtonPressed.current) {
+        onBothClick();
+      }
+    },
+    [leftButtonPressed, onBothClick, rightButtonPressed]
+  );
+
+  const handleMouseUp = (event: React.MouseEvent<unknown>) => {
+    if (event.button === 0) {
+      leftButtonPressed.current = false;
+    } else if (event.button === 2) {
+      rightButtonPressed.current = false;
+    }
+  };
+
+  return {
+    onMouseDown: handleMouseDown,
+    onMouseUp: handleMouseUp,
+  };
+};
+
 export const Cell: FC<CellProps> = ({ x, y, cell }) => {
   const dispatch = useGameDispatch();
 
@@ -17,17 +52,18 @@ export const Cell: FC<CellProps> = ({ x, y, cell }) => {
     dispatch({ type: "open", payload: { x, y } });
   };
 
-  const handleContextMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSetFlag = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     dispatch({ type: "flag", payload: { x, y } });
   };
 
-  const handleOpenSafe = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
+  const handleOpenSafe = () => {
     dispatch({ type: "open-neighbours", payload: { x, y } });
   };
 
-  const disableRightClick = (event: React.MouseEvent<unknown>) => {
+  const bothClickHandlers = useOnBothClick(handleOpenSafe);
+
+  const disableContextMenu = (event: React.MouseEvent<unknown>) => {
     event.preventDefault();
   };
 
@@ -35,7 +71,7 @@ export const Cell: FC<CellProps> = ({ x, y, cell }) => {
     return (
       <button
         onClick={handleClick}
-        onContextMenu={handleContextMenu}
+        onContextMenu={handleSetFlag}
         className="cell cell-closed"
       >
         {cell.state === CellState.FLAGGED ? "🚩" : null}
@@ -52,8 +88,8 @@ export const Cell: FC<CellProps> = ({ x, y, cell }) => {
 
   return (
     <button
-      onDoubleClick={handleOpenSafe}
-      onContextMenu={disableRightClick}
+      {...bothClickHandlers}
+      onContextMenu={disableContextMenu}
       className={openClasses}
     >
       {cell.value === MINE

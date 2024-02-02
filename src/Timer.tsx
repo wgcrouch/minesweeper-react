@@ -1,10 +1,4 @@
-import React, {
-  FC,
-  useRef,
-  useLayoutEffect,
-  useState,
-  useCallback,
-} from "react";
+import { FC, useRef, useLayoutEffect, useState, useCallback } from "react";
 import { PlayState } from "./GameState";
 
 export type TimerProps = {
