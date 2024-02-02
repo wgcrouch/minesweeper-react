@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { PlayState } from "./GameState";
 import { useGameState } from "./GameContext";
 import "./Status.css";

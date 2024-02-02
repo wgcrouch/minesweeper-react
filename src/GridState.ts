@@ -1,5 +1,5 @@
 import { GridSize } from "./GridSizes";
-import { randomPosition} from "./utils";
+import { randomPosition } from "./utils";
 
 export const MINE = "mine";
 
@@ -8,7 +8,7 @@ export enum CellState {
   FLAGGED = "flagged",
   MAYBE = "maybe",
   BOOM = "boom",
-  CLOSED = "closed"
+  CLOSED = "closed",
 }
 
 export type GridCellState = {
@@ -26,7 +26,7 @@ const getNeighbours = (x: number, y: number) => [
   [x + 1, y],
   [x - 1, y + 1],
   [x, y + 1],
-  [x + 1, y + 1]
+  [x + 1, y + 1],
 ];
 
 /**
@@ -34,7 +34,7 @@ const getNeighbours = (x: number, y: number) => [
  */
 export const newGridState = (gridSize: GridSize): GridState => {
   const { height, width } = gridSize;
-  let grid: GridState = [];
+  const grid: GridState = [];
 
   // Create an empty grid with all closed cells
   for (let y = 0; y < height; y++) {
@@ -51,9 +51,14 @@ export const newGridState = (gridSize: GridSize): GridState => {
  * Place mines in the grid but dont place a mine on [notX, notY] as that is the cell the user clicked,
  * avoiding an immediate game over
  */
-export const placeMines = (gridState: GridState, gridSize: GridSize, notX: number, notY: number): GridState => {
-  const { width, height, mines} = gridSize;
-  let rem = mines;  
+export const placeMines = (
+  gridState: GridState,
+  gridSize: GridSize,
+  notX: number,
+  notY: number
+): GridState => {
+  const { width, height, mines } = gridSize;
+  let rem = mines;
   // randomly place the mies
   while (rem > 0) {
     const [x, y] = randomPosition(width, height);
@@ -72,14 +77,14 @@ export const placeMines = (gridState: GridState, gridSize: GridSize, notX: numbe
       }
 
       gridState[y][x].value = getNeighbours(x, y).reduce(
-        (out, [x, y]) => out + (gridState[y]?.[x]?.value === MINE ? 1 : 0), 
+        (out, [x, y]) => out + (gridState[y]?.[x]?.value === MINE ? 1 : 0),
         0
-      )
+      );
     }
   }
 
-  return gridState
-}
+  return gridState;
+};
 
 /**
  * Open all squares that have mines (eg on Game Over)
@@ -87,41 +92,42 @@ export const placeMines = (gridState: GridState, gridSize: GridSize, notX: numbe
 const openMines = (gridState: GridState) => {
   for (let y = 0; y < gridState.length; y++) {
     for (let x = 0; x < gridState[y].length; x++) {
-      const cell =  gridState[y][x];
+      const cell = gridState[y][x];
       if (cell.value === MINE) {
         cell.state = CellState.OPEN;
       }
     }
   }
-}
+};
 
 /**
  * When the user opens an empty square, open all neighbours of that square that
  * are not mines (or flagged). If a neighbour is empty then repeat.
- * 
+ *
  * recursive [flood fill](https://en.wikipedia.org/wiki/Flood_fill)
  */
 const openEmpty = (gridState: GridState, x: number, y: number) => {
-  const cell = gridState[y]?.[x]; 
+  const cell = gridState[y]?.[x];
   if (!cell || cell.state !== CellState.CLOSED) {
     return;
   }
-  cell.state = CellState.OPEN;    
+  cell.state = CellState.OPEN;
   if (cell.value === 0) {
-    getNeighbours(x, y).forEach(
-      ([neighbourX, neighbourY]) => 
-        openEmpty(gridState, neighbourX, neighbourY)
-    )
-
-  } 
-}
+    getNeighbours(x, y).forEach(([neighbourX, neighbourY]) =>
+      openEmpty(gridState, neighbourX, neighbourY)
+    );
+  }
+};
 
 /**
  * Try to open a cell
  */
 export const openCell = (gridState: GridState, x: number, y: number) => {
   const cell = gridState[y]?.[x];
-  if (!cell || (cell.state !== CellState.CLOSED && cell.state !== CellState.MAYBE)) {
+  if (
+    !cell ||
+    (cell.state !== CellState.CLOSED && cell.state !== CellState.MAYBE)
+  ) {
     return;
   }
 
@@ -130,10 +136,10 @@ export const openCell = (gridState: GridState, x: number, y: number) => {
     cell.state = CellState.CLOSED;
     return;
   }
-  
+
   // Clicking a mine causes game over, so mark it as boom and open all mines on the grid
   if (cell.value === MINE) {
-    openMines(gridState)
+    openMines(gridState);
     cell.state = CellState.BOOM;
   } else if (cell.value === 0) {
     openEmpty(gridState, x, y);
@@ -144,25 +150,28 @@ export const openCell = (gridState: GridState, x: number, y: number) => {
 
 /**
  * When double clicking an open cell with a value we can open
- * all neighbouring cells that are not mines or flagged if 
- * all the neighbouring mines are flagged. 
+ * all neighbouring cells that are not mines or flagged if
+ * all the neighbouring mines are flagged.
  */
-export const openSafeNeighbours = (gridState: GridState, x: number, y: number) => {
+export const openSafeNeighbours = (
+  gridState: GridState,
+  x: number,
+  y: number
+) => {
   const cell = gridState[y][x];
   if (cell.state !== CellState.OPEN) {
     return;
   }
 
   const flagCount = getNeighbours(x, y).reduce(
-    (out, [x, y]) => 
+    (out, [x, y]) =>
       out + (gridState[y]?.[x]?.state === CellState.FLAGGED ? 1 : 0),
     0
-  )
-  
+  );
+
   if (flagCount === cell.value) {
-    getNeighbours(x, y).forEach(
-      ([neighbourX, neighbourY]) => 
-        openCell(gridState, neighbourX, neighbourY)
-    )
+    getNeighbours(x, y).forEach(([neighbourX, neighbourY]) =>
+      openCell(gridState, neighbourX, neighbourY)
+    );
   }
 };

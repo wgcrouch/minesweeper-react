@@ -3,7 +3,7 @@ import React, {
   useRef,
   useLayoutEffect,
   useState,
-  useCallback
+  useCallback,
 } from "react";
 import { PlayState } from "./GameState";
 
@@ -12,7 +12,7 @@ export type TimerProps = {
 };
 
 export const Timer: FC<TimerProps> = ({ playState }) => {
-  const [time, setTime] = useState<string>('0.00');
+  const [time, setTime] = useState<string>("0.00");
   const prevState = useRef<PlayState | null>(playState);
   const start = useRef<number | null>(null);
   const request = useRef<number | null>(null);
@@ -23,11 +23,12 @@ export const Timer: FC<TimerProps> = ({ playState }) => {
         start.current = elapsed;
       }
 
-      const newTime = Math.round(((elapsed - start.current) / 1000 + Number.EPSILON) * 100) /
-      100;
-      
-      const [whole, fraction] = newTime.toString().split('.');
-      const padded = [whole, (fraction ?? '').padEnd(2, '0')].join('.')
+      const newTime =
+        Math.round(((elapsed - start.current) / 1000 + Number.EPSILON) * 100) /
+        100;
+
+      const [whole, fraction] = newTime.toString().split(".");
+      const padded = [whole, (fraction ?? "").padEnd(2, "0")].join(".");
       setTime(padded);
       request.current = requestAnimationFrame(updateTime);
     },
@@ -43,7 +44,7 @@ export const Timer: FC<TimerProps> = ({ playState }) => {
           request.current = requestAnimationFrame(updateTime);
           break;
         case PlayState.NEW:
-          setTime('0.00');
+          setTime("0.00");
           request.current && cancelAnimationFrame(request.current);
           start.current = null;
           break;
@@ -54,7 +55,7 @@ export const Timer: FC<TimerProps> = ({ playState }) => {
         default:
           break;
       }
-     prevState.current = playState;
+      prevState.current = playState;
     }
 
     return () => {

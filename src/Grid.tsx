@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Cell } from "./Cell";
 import "./Grid.css";
 import { useGameState } from "./GameContext";

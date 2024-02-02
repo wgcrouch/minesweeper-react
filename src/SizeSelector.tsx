@@ -8,7 +8,7 @@ export const SizeSelector: FC = () => {
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = GridSizes.find(
-      gridSize => gridSize.size === event.target.value
+      (gridSize) => gridSize.size === event.target.value
     );
     if (selected) {
       dispatch({ type: "change-size", payload: { gridSize: selected } });
@@ -20,7 +20,7 @@ export const SizeSelector: FC = () => {
       <label>
         Game size:{" "}
         <select value={selectedSize.size} onChange={handleChange}>
-          {GridSizes.map(gridSize => (
+          {GridSizes.map((gridSize) => (
             <option key={gridSize.size} value={gridSize.size}>
               {gridSize.size}
             </option>

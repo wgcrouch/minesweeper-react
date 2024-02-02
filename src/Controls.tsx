@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { useGameState, useGameDispatch } from "./GameContext";
 import { Timer } from "./Timer";
 import { RemainingFlags } from "./RemainingFlags";

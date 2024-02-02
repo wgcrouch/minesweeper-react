@@ -5,5 +5,5 @@ export type Position = [number, number];
 
 export const randomPosition = (width: number, height: number): Position => [
   rand(0, width),
-  rand(0, height)
+  rand(0, height),
 ];

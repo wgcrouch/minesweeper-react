@@ -27,7 +27,7 @@ export const Cell: FC<CellProps> = ({ x, y, cell }) => {
     dispatch({ type: "open-neighbours", payload: { x, y } });
   };
 
-  const disableRightClick = (event: React.MouseEvent<any>) => {
+  const disableRightClick = (event: React.MouseEvent<unknown>) => {
     event.preventDefault();
   };
 
@@ -56,9 +56,13 @@ export const Cell: FC<CellProps> = ({ x, y, cell }) => {
       onContextMenu={disableRightClick}
       className={openClasses}
     >
-      {cell.value === MINE && cell.state === CellState.BOOM ? "💥" : null}
-      {cell.value === MINE && cell.state !== CellState.BOOM ? "💣" : null}
-      {cell.value > 0 ? cell.value : null}
+      {cell.value === MINE
+        ? cell.state === CellState.BOOM
+          ? "💥"
+          : "💣"
+        : cell.value > 0
+        ? cell.value
+        : null}
     </button>
   );
 };

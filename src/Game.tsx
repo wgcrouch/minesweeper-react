@@ -1,10 +1,11 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Grid } from "./Grid";
 import { SizeSelector } from "./SizeSelector";
 import { Controls } from "./Controls";
 import "./Game.css";
-import { GameProvider } from "./GameContext";
+
 import { Status } from "./Status";
+import { GameProvider } from "./GameProvider";
 
 export const Game: FC = () => {
   return (

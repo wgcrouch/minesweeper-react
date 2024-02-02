@@ -1,6 +1,11 @@
 import * as React from "react";
-import { render } from "react-dom";
+import ReactDOM from "react-dom/client";
 import { Game } from "./Game";
 
 const rootElement = document.getElementById("root");
-render(<Game />, rootElement);
+
+ReactDOM.createRoot(rootElement!).render(
+  <React.StrictMode>
+    <Game />
+  </React.StrictMode>
+);

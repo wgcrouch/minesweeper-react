@@ -6,7 +6,7 @@ import {
   openCell,
   MINE,
   openSafeNeighbours,
-  placeMines
+  placeMines,
 } from "./GridState";
 import produce from "immer";
 
@@ -14,7 +14,7 @@ export enum PlayState {
   NEW = "new",
   GAME_OVER = "game over",
   WIN = "win",
-  ACTIVE = "active"
+  ACTIVE = "active",
 }
 
 export type GameState = {
@@ -29,7 +29,7 @@ export const newGameState = (gridSize: GridSize): GameState => {
     gridSize: gridSize,
     playState: PlayState.NEW,
     gridState: newGridState(gridSize),
-    remainingFlags: gridSize.mines
+    remainingFlags: gridSize.mines,
   };
 };
 
@@ -38,7 +38,7 @@ export const gameStateReducer: (
   action: GameAction
 ) => GameState = produce((state: GameState, action: GameAction) => {
   switch (action.type) {
-    case "flag":
+    case "flag": {
       if (
         state.playState !== PlayState.ACTIVE &&
         state.playState !== PlayState.NEW
@@ -64,6 +64,7 @@ export const gameStateReducer: (
           break;
       }
       break;
+    }
     case "open": {
       if (
         state.playState !== PlayState.ACTIVE &&
